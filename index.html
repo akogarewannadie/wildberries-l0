@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Retrieval</title>
+    <script>
+        async function getOrder() {
+            const orderUID = document.getElementById("orderUID").value;
+
+            // Отладочный вывод JSON
+            console.log("Request JSON:", JSON.stringify({ orderUID }));
+
+            // Отправляем HTTP-запрос на серверное приложение
+            const response = await fetch(`/order?orderUID=${orderUID}`);
+            const data = await response.json();
+            if (data.success) {
+                displayOrder(data.order);
+            } else {
+                alert("Failed to retrieve order information.");
+            }
+        }
+
+        function displayOrder(order) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `
+                <p><strong>Order UID:</strong> ${order.order_uid}</p>
+                <p><strong>Track Number:</strong> ${order.track_number}</p>
+                <p><strong>Entry:</strong> ${order.entry}</p>
+                <p><strong>Locale:</strong> ${order.locale}</p>
+                <p><strong>Internal Signature:</strong> ${order.internal_signature}</p>
+                <p><strong>Customer ID:</strong> ${order.customer_id}</p>
+                <p><strong>Delivery Service:</strong> ${order.delivery_service}</p>
+                <p><strong>Shard Key:</strong> ${order.shardkey}</p>
+                <p><strong>SMID:</strong> ${order.sm_id}</p>
+                <p><strong>Date Created:</strong> ${order.date_created}</p>
+                <p><strong>Oof Shard:</strong> ${order.oof_shard}</p>
+                <p><strong>Delivery Name:</strong> ${order.delivery.name}</p>
+                <p><strong>Delivery Phone:</strong> ${order.delivery.phone}</p>
+                <p><strong>Delivery Zip:</strong> ${order.delivery.zip}</p>
+                <p><strong>Delivery City:</strong> ${order.delivery.city}</p>
+                <p><strong>Delivery Address:</strong> ${order.delivery.address}</p>
+                <p><strong>Delivery Region:</strong> ${order.delivery.region}</p>
+                <p><strong>Delivery Email:</strong> ${order.delivery.email}</p>
+                <p><strong>Payment Transaction:</strong> ${order.payment.transaction}</p>
+                <p><strong>Payment Request ID:</strong> ${order.payment.request_id}</p>
+                <p><strong>Payment Currency:</strong> ${order.payment.currency}</p>
+                <p><strong>Payment Provider:</strong> ${order.payment.provider}</p>
+                <p><strong>Payment Amount:</strong> ${order.payment.amount}</p>
+                <p><strong>Payment Payment DT:</strong> ${order.payment.payment_dt}</p>
+                <p><strong>Payment Bank:</strong> ${order.payment.bank}</p>
+                <p><strong>Payment Delivery Cost:</strong> ${order.payment.delivery_cost}</p>
+                <p><strong>Payment Goods Total:</strong> ${order.payment.goods_total}</p>
+                <p><strong>Payment Custom Fee:</strong> ${order.payment.custom_fee}</p>
+            `;
+        }
+    </script>
+</head>
+<body>
+    <h1>Order Retrieval</h1>
+    <label for="orderUID">Order UID:</label>
+    <input type="text" id="orderUID" name="orderUID">
+    <button onclick="getOrder()">Get Order</button>
+
+    <div id="result"></div>
+</body>
+</html>

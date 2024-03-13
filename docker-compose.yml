@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+
+  nats:
+    image: nats-streaming:alpine
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    container_name: nats
+    ports:
+      - "4222:4222"
+    env_file:
+      - '.env'
+    command:
+      - "--store"
+      - "file"
+      - "--dir"
+      - "data"
+    volumes:
+      - ./volumes/nats_data_store:/data:Z
