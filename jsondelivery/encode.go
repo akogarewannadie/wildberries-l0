@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -50,6 +51,10 @@ type Payment struct {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	// Открываем файл с данными JSON
 	data, err := os.ReadFile("model.json")
 	if err != nil {
@@ -63,7 +68,8 @@ func main() {
 	}
 
 	// Подключаемся к базе данных PostgreSQL
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=90218575 dbname=orders sslmode=disable")
+	dbInfo := getDBInfoFromEnv()
+	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,4 +83,14 @@ func main() {
 	}
 
 	log.Println("Data inserted successfully")
+}
+
+func getDBInfoFromEnv() string {
+	dbHost := os.Getenv("PGHOST")
+	dbName := os.Getenv("DBNAME")
+	dbPort := os.Getenv("PORT")
+	dbUser := os.Getenv("PGUSER")
+	dbPassword := os.Getenv("PGPASSWORD")
+
+	return "host=" + dbHost + " port=" + dbPort + " user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " sslmode=disable"
 }

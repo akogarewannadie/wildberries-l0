@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"os"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -76,7 +77,7 @@ type Response struct {
 
 func init() {
 	var err error
-	db, err = sql.Open("postgres", "host=localhost port=5432 user=postgres password=90218575 dbname=orders sslmode=disable")
+	db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
