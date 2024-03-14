@@ -96,7 +96,6 @@ func main() {
 				return
 			}
 
-			// Проверяем, есть ли данные в кеше
 			mu.Lock()
 			order, ok := cache[orderReq.OrderUID]
 			mu.Unlock()
@@ -106,7 +105,6 @@ func main() {
 				return
 			}
 
-			// Если данных в кеше нет, отправляем запрос через NATS Streaming
 			if err := nc.Publish("order_query", msg.Data); err != nil {
 				log.Printf("Error sending order query: %v", err)
 			}
@@ -119,7 +117,6 @@ func main() {
 				return
 			}
 
-			// Сохраняем данные в кеше
 			mu.Lock()
 			cache[orderResp.OrderUID] = orderResp
 			mu.Unlock()
@@ -134,7 +131,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func orderHandler(w http.ResponseWriter, r *http.Request) {
-	orderUID := r.URL.Query().Get("orderUID") // Получаем значение параметра orderUID из URL
+	orderUID := r.URL.Query().Get("orderUID")
 
 	if orderUID == "" {
 		log.Println("Empty order UID")
@@ -163,7 +160,7 @@ func orderHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getOrder(orderUID string) (*Order, error) {
-	// Проверяем, есть ли данные в кеше
+
 	mu.Lock()
 	order, ok := cache[orderUID]
 	mu.Unlock()
@@ -196,7 +193,7 @@ func getOrder(orderUID string) (*Order, error) {
 }
 
 func sendOrderResponse(order Order, replySubject string) {
-	// Добавим вывод в консоль содержимого структуры перед сериализацией
+
 	log.Printf("Sending order response: %+v", order)
 
 	orderJSON, err := json.Marshal(order)

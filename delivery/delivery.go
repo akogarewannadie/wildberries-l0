@@ -102,7 +102,7 @@ func main() {
 
 func handleOrderRequest(msg *nats.Msg) {
 	orderUID := string(msg.Data)
-	// Выводим содержимое полученного сообщения в консоль
+
 	log.Printf("Received message: %s", orderUID)
 
 	orderData, err := getOrderFromDatabase(orderUID)
@@ -128,7 +128,6 @@ func getOrderFromDatabase(orderUID string) (*Order, error) {
 	err := row.Scan(&order.OrderUID, &order.TrackNumber, &order.Entry, &order.Delivery.Name, &order.Delivery.Phone, &order.Delivery.Zip, &order.Delivery.City, &order.Delivery.Address, &order.Delivery.Region, &order.Delivery.Email, &order.Payment.Transaction, &order.Payment.RequestID, &order.Payment.Currency, &order.Payment.Provider, &order.Payment.Amount, &order.Payment.PaymentDT, &order.Payment.Bank, &order.Payment.DeliveryCost, &order.Payment.GoodsTotal, &order.Payment.CustomFee, &order.Locale, &order.InternalSignature, &order.CustomerID, &order.DeliveryService, &order.ShardKey, &order.SMID, &order.DateCreated, &order.OofShard)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			// Возвращаем nil, если не найдено ни одной строки
 			return nil, nil
 		}
 		return nil, err
@@ -139,7 +138,7 @@ func getOrderFromDatabase(orderUID string) (*Order, error) {
 }
 
 func sendOrderResponse(orderData *Order, replySubject string) error {
-	// Добавим вывод в консоль содержимого структуры перед сериализацией
+
 	log.Printf("Sending order response: %+v", orderData)
 
 	orderJSON, err := json.Marshal(orderData)

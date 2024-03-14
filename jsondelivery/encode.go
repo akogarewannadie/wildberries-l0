@@ -55,19 +55,16 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	// Открываем файл с данными JSON
 	data, err := os.ReadFile("model.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Распаковываем данные JSON в структуру Order
 	var order Order
 	if err := json.Unmarshal(data, &order); err != nil {
 		log.Fatal(err)
 	}
 
-	// Подключаемся к базе данных PostgreSQL
 	dbInfo := getDBInfoFromEnv()
 	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
@@ -75,7 +72,6 @@ func main() {
 	}
 	defer db.Close()
 
-	// Вставляем данные в таблицу orders
 	_, err = db.Exec("INSERT INTO orders (order_uid, track_number, entry, delivery_name, delivery_phone, delivery_zip, delivery_city, delivery_address, delivery_region, delivery_email, payment_transaction, payment_request_id, payment_currency, payment_provider, payment_amount, payment_payment_dt, payment_bank, payment_delivery_cost, payment_goods_total, payment_custom_fee, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)",
 		order.OrderUID, order.TrackNumber, order.Entry, order.Delivery.Name, order.Delivery.Phone, order.Delivery.Zip, order.Delivery.City, order.Delivery.Address, order.Delivery.Region, order.Delivery.Email, order.Payment.Transaction, order.Payment.RequestID, order.Payment.Currency, order.Payment.Provider, order.Payment.Amount, order.Payment.PaymentDT, order.Payment.Bank, order.Payment.DeliveryCost, order.Payment.GoodsTotal, order.Payment.CustomFee, order.Locale, order.InternalSignature, order.CustomerID, order.DeliveryService, order.ShardKey, order.SMID, order.DateCreated, order.OofShard)
 	if err != nil {
